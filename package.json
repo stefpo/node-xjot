@@ -1,0 +1,19 @@
+{
+  "name": "xjot",
+  "version": "1.0.0",
+  "description": "A extensible object type checking library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "type",
+    "object"
+  ],
+  "author": "stephane.potelle@gmail.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://framagit.org/stefpo/xjot.git"
+  }
+}
