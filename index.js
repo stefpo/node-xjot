@@ -22,161 +22,160 @@ function setDefaultRules ( rules ) {
     return ar
 }
 
-function typeInt( rules ) {
-    let ar = setDefaultRules( rules )
-    ar.defaut = ar.default || 0
-
-    return {
-        attr: ar,
-        chkfn: function(v) {
-                if ( v == undefined ) {
-                    if ( ar.required ) throw typeErrorMissing
-                    else if ( ar.default != undefined ) return ar.default
-                    else return undefined
-                }
-                else if ( v == null ) {
-                        if ( ! ar.acceptNull ) throw typeErrorNullNotAllowed
-                        else return null            
-                } else  if (typeof(v) == "number") {
-                        if (ar.max != undefined && v > ar.max ) throw typeErrorOutOfRange
-                        if (ar.min != undefined && v < ar.min ) throw typeErrorOutOfRange
-                        return Math.trunc(v,0)
-                } 
-                else throw typeErrorInvalidType
-        }
+class IntT{
+    constructor( attr ) {
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
     }
+
+    checkType(v) {
+        if ( typeof(v) == "string" ) v = parseInt(v)
+        if ( v == undefined ) {
+            if ( this.attr.required ) throw typeErrorMissing
+            else if ( this.attr.default != undefined ) return this.attr.default
+            else return undefined
+        } else if (isNaN(v)) {
+            throw typeErrorInvalidType
+        } else if ( v == null ) {
+                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                else return null            
+        } else  if (typeof(v) == "number" ) {
+                if (this.attr.max != undefined && v > this.attr.max ) throw typeErrorOutOfRange
+                if (this.attr.min != undefined && v < this.attr.min ) throw typeErrorOutOfRange
+                return Math.trunc(v,0)
+        } 
+        else throw typeErrorInvalidType
+    }    
 }
 
-function typeNumber( rules ) {
-    let ar = setDefaultRules( rules )
-    ar.defaut = ar.default || 0
 
-    return {
-        attr: ar,
-        chkfn: function(v) {
-            if ( v == undefined ) {
-                if ( ar.required ) throw typeErrorMissing
-                else if ( ar.default != undefined ) return ar.default
-                else return undefined
-            }
-            else if ( v == null ) {
-                    if ( ! ar.acceptNull ) throw typeErrorNullNotAllowed
-                    else return null            
-            } else  if (typeof(v) == "number") {
-                    if (ar.max != undefined && v > ar.max ) throw typeErrorOutOfRange
-                    if (ar.min != undefined && v < ar.min ) throw typeErrorOutOfRange
-                    return v
-            } 
-            else throw typeErrorInvalidType
-        }
+class NumberT{
+    constructor( attr ) {
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
     }
-}
 
-function typeBoolean( rules ) {
-    let ar = setDefaultRules( rules )
-    ar.defaut = ar.default || false
-
-    return {
-        attr: ar,
-        chkfn: function(v) {
-            if ( v == undefined ) {
-                if ( ar.required ) throw typeErrorMissing
-                else if ( ar.default != undefined ) return ar.default
-                else return undefined
-            }
-            else if ( v == null ) {
-                    if ( ! ar.acceptNull ) throw typeErrorNullNotAllowed
-                    else return null            
-            }
-            else if (v == "Y" || v == "y" || v == "1") {
-                return true
-            } 
-            else if (v == "N" || v == "n" || v == "0") {
-                return false
-            } 
-            else if (typeof(v) == "boolean") {
-                    return v
-            } 
-            else throw typeErrorInvalidType
-        }
-    }
-}
-
-function typeDate( rules ) {
-    let ar = setDefaultRules( rules )
-    ar.defaut = ar.default || new Date(Date.now())
-
-    return {
-        attr: ar,
-            chkfn: function(v) {
-            if ( v == undefined ) {
-                if ( ar.required ) throw typeErrorMissing
-                else if ( ar.default != undefined ) return ar.default
-                else return undefined
-            }
-            else if ( v == null ) {
-                    if ( ! ar.acceptNull ) throw typeErrorNullNotAllowed
-                    else return null            
-            }
-            else if ( typeof(v.getTime) == "function") {
+    checkType(v) {
+        if ( typeof(v) == "string" ) v = parseInt(v)
+        if ( v == undefined ) {
+            if ( this.attr.required ) throw typeErrorMissing
+            else if ( this.attr.default != undefined ) return this.attr.default
+            else return undefined
+        } else if (isNaN(v)) {
+            throw typeErrorInvalidType
+        } else if ( v == null ) {
+                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                else return null   
+        } else  if (typeof(v) == "number") {
+                if (this.attr.max != undefined && v > this.attr.max ) throw typeErrorOutOfRange
+                if (this.attr.min != undefined && v < this.attr.min ) throw typeErrorOutOfRange
                 return v
-            }
-            else if ( typeof(v) == "string") {
-                let d = Date.parse(v) 
-                if ( isNaN(d)  ) throw typeErrorInvalidDateFormat
-                else return new Date(d)
-            } 
-            else throw typeErrorInvalidType
-        }
-    }
+        } 
+        else throw typeErrorInvalidType
+    }    
 }
 
-function typeString( rules ) {
-    let ar = setDefaultRules( rules )
-    ar.defaut = ar.default || ""
-    ar.values = ar.values || null
-    ar.maxLength = ar.maxLength || -1
-    ar.autoTruncate = ar.autoTruncate == undefined ? true : ar.autoTruncate 
-    ar.autoTrimSpaces = ar.autoTrimSpaces || false
-
-    return {
-        attr: ar,
-        chkfn: function(v) {
-            if ( v == undefined ) {
-                if ( ar.required ) throw typeErrorMissing
-                else if ( ar.default != undefined ) return ar.default
-                else return undefined
-            }
-            else if ( v == null ) {
-                    if ( ! ar.acceptNull ) throw typeErrorNullNotAllowed
-                    else return null            
-            } else  if (typeof(v) == "string") {
-                    if (ar.values && ! ar.values.includes(v) ) throw typeErrorOutOfRange
-                    if ( ar.autoTrimSpaces ) v = v.trim()
-                    if ( ar.maxLength > 0 && ar.autoTruncate ) {
-                        v = v.substr(0, ar.maxLength )
-                    }
-                    if ( ar.maxLength > 0 && v.length > ar.maxLength ) throw typeErrorStringTooLong
-                    return v
-            } 
-            else throw typeErrorInvalidType
-        }
+class BooleanT{
+    constructor( attr ) {
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
     }
+
+    checkType(v) {
+        if ( v == undefined ) {
+            if ( this.attr.required ) throw typeErrorMissing
+            else if ( this.attr.default != undefined ) return this.attr.default
+            else return undefined
+        }
+        else if ( v == null ) {
+                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                else return null            
+        }
+        else if (v == "Y" || v == "y" || v == "1") {
+            return true
+        } 
+        else if (v == "N" || v == "n" || v == "0") {
+            return false
+        } 
+        else if (typeof(v) == "boolean") {
+                return v
+        } 
+        else throw typeErrorInvalidType
+    }    
 }
 
-class Template {
-    constructor( def ) {
+class DateT{
+    constructor( attr ) {
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
+    }
+
+    checkType(v) {
+        if ( v == undefined ) {
+            if ( this.attr.required ) throw typeErrorMissing
+            else if ( this.attr.default != undefined ) return this.attr.default
+            else return undefined
+        }
+        else if ( v == null ) {
+                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                else return null            
+        }
+        else if ( typeof(v.getTime) == "function") {
+            return v
+        }
+        else if ( typeof(v) == "string") {
+            let d = Date.parse(v) 
+            if ( isNaN(d)  ) throw typeErrorInvalidDateFormat
+            else return new Date(d)
+        } 
+        else throw typeErrorInvalidType
+    }    
+}
+
+class StringT{
+    constructor( attr ) {
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
+    }    
+    checkType(v) {
+        if ( v == undefined ) {
+            if ( this.attr.required ) throw typeErrorMissing
+            else if ( this.attr.default != undefined ) return this.attr.default
+            else return undefined
+        }
+        else if ( v == null ) {
+                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                else return null            
+        } else  if (typeof(v) == "string") {
+                if (this.attr.values && ! this.attr.values.includes(v) ) throw typeErrorOutOfRange
+                if ( this.attr.autoTrimSpaces ) v = v.trim()
+                if ( this.attr.maxLength > 0 && this.attr.autoTruncate ) {
+                    v = v.substr(0, this.attr.maxLength )
+                }
+                if ( this.attr.maxLength > 0 && v.length > this.attr.maxLength ) throw typeErrorStringTooLong
+                return v
+        } 
+        else throw typeErrorInvalidType
+    }    
+}
+
+class ObjectT {
+    constructor( def, attr ) {
         this.tmpl = def
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
     }
 
     checkType( obj ) {
         let validationErrors = null
+        if ( this.attr.required && obj == undefined ) throw typeErrorMissing
+        if (typeof(obj) != "object") throw typeErrorInvalidType
         for ( let k of Object.keys(this.tmpl)) {
             let v = obj[k]
             let fd = this.tmpl[k]
-            if (typeof(fd.chkfn) == "function" ) { 
+            if (typeof(fd.checkType) == "function" ) { 
                 try {
-                    let cr = fd.chkfn(v)
+                    let cr = fd.checkType(v)
                     obj[k] = cr
                 } catch (e) {
                     if (validationErrors == null) validationErrors={}
@@ -187,14 +186,32 @@ class Template {
                 validationErrors[k] = typeErrorInvalidDefinition
             }
         }
-        return validationErrors
+        if ( validationErrors ) throw validationErrors
+        if (typeof(this.attr.validate) == "function" ) {
+            let x = this.attr.validate(obj)
+            if (x) throw x
+        }
+            
+        return obj
     }
+
+    validate( obj ) {
+        try {
+            let ret = this.checkType(obj)
+            return null
+        } catch (e) {
+            return e
+        }
+    }
+
 
     toDbFields(obj) {
         let ret = {}
         for ( let k of Object.keys(this.tmpl)) {
             let v = obj[k]
             let fd = this.tmpl[k].attr
+            if (fd == undefined ) 
+                console.log("undef")
             let fn = fd.dbField || k          
             ret[fn] = v
         }
@@ -202,8 +219,68 @@ class Template {
     }
 }
 
-function T( def ) {
-    return new Template(def)
+class ArrayT{
+    constructor( def, attr ) {
+        this.tmpl = def
+        this.attr = attr || {}
+        setDefaultRules (this.attr)
+    }    
+
+    checkType( obj ) {
+        let validationErrors = null
+        if ( this.attr.required && obj == undefined ) throw typeErrorMissing
+        if (! Array.isArray(obj)) throw typeErrorInvalidType
+        for (let i in obj) {
+            try {
+                let x = typeObject(this.tmpl).checkType(obj[i])
+            }catch (e) {
+                if (validationErrors == null) validationErrors={}
+                validationErrors[i] = e
+            }
+        }
+
+        if ( validationErrors ) throw validationErrors
+            
+        return obj
+    }    
+
+    validate( obj ) {
+        try {
+            let ret = this.checkType(obj)
+            return null
+        } catch (e) {
+            return e
+        }
+    }    
+}
+
+
+function typeInt( rules ) {
+    return new IntT(rules)
+}
+
+function typeNumber( rules ) {
+    return new NumberT(rules)
+}
+
+function typeBoolean( rules ) {
+    return new BooleanT(rules)
+}
+
+function typeDate( rules ) {
+    return new DateT(rules)
+}
+
+function typeString( rules ) {
+    return new StringT(rules)
+}
+
+function typeObject( def, attr ) {
+    return new ObjectT(def, attr)
+}
+
+function typeArray( def, attr ) {
+    return new ArrayT(def, attr)
 }
 
 module.exports.int = typeInt
@@ -211,8 +288,8 @@ module.exports.number = typeNumber
 module.exports.boolean = typeBoolean
 module.exports.string = typeString
 module.exports.date = typeDate
-module.exports.Template = Template
-module.exports.T = T
+module.exports.object = typeObject
+module.exports.array = typeArray
 
 module.exports.typeErrorInvalidType = typeErrorInvalidType
 module.exports.typeErrorMissing = typeErrorMissing

@@ -11,7 +11,7 @@ To use xjot:
 
 ## Basic use
 
-    let contactT = xjot.Template {
+    let contactT = xjot.object {
         firstName : xjot.string( { required: true, maxLength: 18, autoTruncate: true }),
         lastName : xjot.string( { required: true, maxLength: 18, autoTruncate: true }),
         age: xjot.int( required: false, min:1, max: 77 )
@@ -19,9 +19,9 @@ To use xjot:
 
     myObject = { firstName: "John", lastName = "Doe"}
 
-    console.log(JSON.stringify(contactT.checkType(myObject),undefined,4 ))
+    console.log(JSON.stringify(contactT.validate(myObject),undefined,4 ))
 
-xjot will not only check the field values. It will also modify the values based on the formatting parametes provided.
+xjot will not only check the field values. It will also perform type convesion and modify the values based on the formatting parameters provided.
 
 ## Template reference
 
@@ -29,10 +29,14 @@ xjot will not only check the field values. It will also modify the values based 
 
 xjot currently supports the following types:
 
-* int: integer (value will be truncated)
-* number: any number
+* int: integer (value will be truncated) or string that can be converted to a number
+* number: any number or string that can be converted to a number
 * boolean: any value that can be interpreted as a boolean (true, false, Y, N, 1, 0)
+* date: a string that meets the defined criteria,  or string that can be converted to a date
 * string: a string that meets the defined criteria
+* object: an object composed of any of the xjot types
+* array: and array of any of the xjot types
+
 
 ### Template parameters
 
