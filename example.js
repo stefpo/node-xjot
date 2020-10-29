@@ -30,10 +30,15 @@ template = xjot.object({
                     x1: xjot.int(),
                     x2: xjot.string() }, 
                     { required: true } ),  
-    arr1:        xjot.array({
+    arr1:        xjot.array( xjot.object({
         f1: xjot.int(),
-        f2: xjot.string()
-    }, { required: true } ),  
+        f2: xjot.string()}),
+        { required: true } ),  
+    arr2:        xjot.array( {
+        f1: xjot.int(),
+        f2: xjot.string()},
+        { required: false } ), 
+    arr3: xjot.array( xjot.int() )             
 })
 
 obj = {
@@ -53,7 +58,9 @@ obj = {
         f1: "23", f2: "A string"
     },
     obj3: "titi",
-    arr1: [ {f1:1, f2: "zaza"}, {f1:"fail", f2: "zaza"} ] 
+    arr1: [ {f1:1, f2: "zaza"}, {f1:"fail", f2: "zozo"} ],
+    arr2: [ {f1:1, f2: "zaza"}, {f1:"fail", f2: "zozo"} ],
+    arr3: [ 1,2,3,4,5, "this one fails" ]  
 }
 
 

@@ -221,7 +221,12 @@ class ObjectT {
 
 class ArrayT{
     constructor( def, attr ) {
-        this.tmpl = def
+        if (typeof(def) != 'object') throw Object.getPrototypeOf(this).constructor.name + ": Invalid type definition"
+        if (def.checkType && typeof(def.checkType) == "function") {
+            this.tmpl = def
+        } else {
+            this.tmpl = typeObject(def)
+        }
         this.attr = attr || {}
         setDefaultRules (this.attr)
     }    
@@ -232,7 +237,7 @@ class ArrayT{
         if (! Array.isArray(obj)) throw typeErrorInvalidType
         for (let i in obj) {
             try {
-                let x = typeObject(this.tmpl).checkType(obj[i])
+                let x = this.tmpl.checkType(obj[i])
             }catch (e) {
                 if (validationErrors == null) validationErrors={}
                 validationErrors[i] = e
