@@ -6,6 +6,12 @@
 
 xjot = require ("./index")
 
+arrayObject = xjot.object({
+        f1: xjot.int(),
+        f2: xjot.string() } )
+
+
+
 template = xjot.object({
     intField:   xjot.int({ required: true, dbField: "int_field" }),
     required:   xjot.int({ required: true, altName: "req"}),
@@ -31,15 +37,13 @@ template = xjot.object({
                     x2: xjot.string() }, 
                     { required: true } ),  
     arr1:        xjot.array( xjot.object({
-        f1: xjot.int(),
-        f2: xjot.string()}),
-        { required: true } ),  
-    arr2:        xjot.array( {
-        f1: xjot.int(),
-        f2: xjot.string()},
-        { required: false } ), 
+                            f1: xjot.int(),
+                            f2: xjot.string()}),
+                            { required: true, minLength: 4 } ),  
+    arr2:        xjot.array( arrayObject, { required: false } ), 
     arr3: xjot.array( xjot.int() )             
 })
+
 
 obj = {
     intField: 12.5,

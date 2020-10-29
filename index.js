@@ -12,6 +12,9 @@ const typeErrorOutOfRange = "Value out of range"
 const typeErrorStringTooLong = "String size exceeds max length"
 const typeErrorInvalidDefinition = "Invalid type definition"
 const typeErrorInvalidDateFormat = "Invalid date format"
+const typeErrorArrayTooSmall = "Array too small"
+const typeErrorArrayTooLarge = "Array too large"
+
 
 function setDefaultRules ( rules ) {
     let ar = rules || {}
@@ -235,6 +238,8 @@ class ArrayT{
         let validationErrors = null
         if ( this.attr.required && obj == undefined ) throw typeErrorMissing
         if (! Array.isArray(obj)) throw typeErrorInvalidType
+        if ( this.attr.minLength && obj.length < this.attr.minLength ) throw typeErrorArrayTooSmall
+        if ( this.attr.maxLength && obj.length > this.attr.maxLength ) throw typeErrorArrayTooLarge
         for (let i in obj) {
             try {
                 let x = this.tmpl.checkType(obj[i])
