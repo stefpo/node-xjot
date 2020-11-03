@@ -236,7 +236,7 @@ class ObjectT {
         if ( ! this.validate(o)) {
             for ( let k of Object.keys(this.tmpl)) {
                 if (this.tmpl[k].isSimpleType && ! this.tmpl[k].rules.autoIncrement
-                    && Object.keys(o).includes(k) ) {
+                    && Object.keys(o).includes(k) && this.tmpl[k].rules.dbfield != null) {
                     dbfields.push(this.tmpl[k].rules.dbfield || k)
                     pfields.push("@"+k)
                 }
@@ -256,7 +256,7 @@ class ObjectT {
                 if (this.tmpl[k].rules.primaryKey ) {
                     where = this.tmpl[k].rules.dbfield || k + " = @" +k
                 } else if (this.tmpl[k].isSimpleType && ! this.tmpl[k].rules.autoIncrement
-                    && Object.keys(o).includes(k) ) {
+                    && Object.keys(o).includes(k)  && this.tmpl[k].rules.dbfield != null ) {
                         updFields.push(this.tmpl[k].rules.dbfield || k + " = @" +k)
                 }
             } 
