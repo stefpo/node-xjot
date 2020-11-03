@@ -186,7 +186,7 @@ class ObjectT {
             if (typeof(fd.checkType) == "function" ) { 
                 try {
                     let cr = fd.checkType(v)
-                    if (createMissingProperties || oprops.includes(k)) obj[k] = cr
+                    if (createMissingProperties || oprops.includes(k) || cr != undefined ) obj[k] = cr
                 } catch (e) {
                     if (validationErrors == null) validationErrors={}
                     validationErrors[k] = e

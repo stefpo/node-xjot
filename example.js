@@ -77,7 +77,8 @@ contactRecord = xjot.object( {
     lastName : xjot.string(),
     birthDate: xjot.date(),
     age: xjot.int(),
-    email: xjot.string()
+    email: xjot.string( { default: "" } ),
+    altEmail: xjot.string()
     }, { table: "contact"}
 )
 
