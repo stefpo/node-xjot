@@ -26,25 +26,26 @@ function setDefaultRules ( rules ) {
 }
 
 class IntT{
-    constructor( attr ) {
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+    constructor( rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = true
+        setDefaultRules (this.rules)
     }
 
     checkType(v) {
         if ( typeof(v) == "string" ) v = parseInt(v)
         if ( v == undefined ) {
-            if ( this.attr.required ) throw typeErrorMissing
-            else if ( this.attr.default != undefined ) return this.attr.default
+            if ( this.rules.required ) throw typeErrorMissing
+            else if ( this.rules.default != undefined ) return this.rules.default
             else return undefined
         } else if (isNaN(v)) {
             throw typeErrorInvalidType
         } else if ( v == null ) {
-                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                if ( ! this.rules.acceptNull ) throw typeErrorNullNotAllowed
                 else return null            
         } else  if (typeof(v) == "number" ) {
-                if (this.attr.max != undefined && v > this.attr.max ) throw typeErrorOutOfRange
-                if (this.attr.min != undefined && v < this.attr.min ) throw typeErrorOutOfRange
+                if (this.rules.max != undefined && v > this.rules.max ) throw typeErrorOutOfRange
+                if (this.rules.min != undefined && v < this.rules.min ) throw typeErrorOutOfRange
                 return Math.trunc(v,0)
         } 
         else throw typeErrorInvalidType
@@ -53,25 +54,26 @@ class IntT{
 
 
 class NumberT{
-    constructor( attr ) {
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+    constructor( rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = true
+        setDefaultRules (this.rules)
     }
 
     checkType(v) {
-        if ( typeof(v) == "string" ) v = parseInt(v)
+        if ( typeof(v) == "string" ) v = parseFloat(v)
         if ( v == undefined ) {
-            if ( this.attr.required ) throw typeErrorMissing
-            else if ( this.attr.default != undefined ) return this.attr.default
+            if ( this.rules.required ) throw typeErrorMissing
+            else if ( this.rules.default != undefined ) return this.rules.default
             else return undefined
         } else if (isNaN(v)) {
             throw typeErrorInvalidType
         } else if ( v == null ) {
-                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                if ( ! this.rules.acceptNull ) throw typeErrorNullNotAllowed
                 else return null   
         } else  if (typeof(v) == "number") {
-                if (this.attr.max != undefined && v > this.attr.max ) throw typeErrorOutOfRange
-                if (this.attr.min != undefined && v < this.attr.min ) throw typeErrorOutOfRange
+                if (this.rules.max != undefined && v > this.rules.max ) throw typeErrorOutOfRange
+                if (this.rules.min != undefined && v < this.rules.min ) throw typeErrorOutOfRange
                 return v
         } 
         else throw typeErrorInvalidType
@@ -79,19 +81,20 @@ class NumberT{
 }
 
 class BooleanT{
-    constructor( attr ) {
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+    constructor( rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = true
+        setDefaultRules (this.rules)
     }
 
     checkType(v) {
         if ( v == undefined ) {
-            if ( this.attr.required ) throw typeErrorMissing
-            else if ( this.attr.default != undefined ) return this.attr.default
+            if ( this.rules.required ) throw typeErrorMissing
+            else if ( this.rules.default != undefined ) return this.rules.default
             else return undefined
         }
         else if ( v == null ) {
-                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                if ( ! this.rules.acceptNull ) throw typeErrorNullNotAllowed
                 else return null            
         }
         else if (v == "Y" || v == "y" || v == "1") {
@@ -108,22 +111,23 @@ class BooleanT{
 }
 
 class DateT{
-    constructor( attr ) {
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+    constructor( rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = true
+        setDefaultRules (this.rules)
     }
 
     checkType(v) {
         if ( v == undefined ) {
-            if ( this.attr.required ) throw typeErrorMissing
-            else if ( this.attr.default != undefined ) return this.attr.default
+            if ( this.rules.required ) throw typeErrorMissing
+            else if ( this.rules.default != undefined ) return this.rules.default
             else return undefined
         }
         else if ( v == null ) {
-                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                if ( ! this.rules.acceptNull ) throw typeErrorNullNotAllowed
                 else return null            
         }
-        else if ( typeof(v.getTime) == "function") {
+        else if ( v instanceof Date ) {
             return v
         }
         else if ( typeof(v) == "string") {
@@ -136,26 +140,27 @@ class DateT{
 }
 
 class StringT{
-    constructor( attr ) {
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+    constructor( rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = true
+        setDefaultRules (this.rules)
     }    
     checkType(v) {
         if ( v == undefined ) {
-            if ( this.attr.required ) throw typeErrorMissing
-            else if ( this.attr.default != undefined ) return this.attr.default
+            if ( this.rules.required ) throw typeErrorMissing
+            else if ( this.rules.default != undefined ) return this.rules.default
             else return undefined
         }
         else if ( v == null ) {
-                if ( ! this.attr.acceptNull ) throw typeErrorNullNotAllowed
+                if ( ! this.rules.acceptNull ) throw typeErrorNullNotAllowed
                 else return null            
         } else  if (typeof(v) == "string") {
-                if (this.attr.values && ! this.attr.values.includes(v) ) throw typeErrorOutOfRange
-                if ( this.attr.autoTrimSpaces ) v = v.trim()
-                if ( this.attr.maxLength > 0 && this.attr.autoTruncate ) {
-                    v = v.substr(0, this.attr.maxLength )
+                if (this.rules.values && ! this.rules.values.includes(v) ) throw typeErrorOutOfRange
+                if ( this.rules.autoTrimSpaces ) v = v.trim()
+                if ( this.rules.maxLength > 0 && this.rules.autoTruncate ) {
+                    v = v.substr(0, this.rules.maxLength )
                 }
-                if ( this.attr.maxLength > 0 && v.length > this.attr.maxLength ) throw typeErrorStringTooLong
+                if ( this.rules.maxLength > 0 && v.length > this.rules.maxLength ) throw typeErrorStringTooLong
                 return v
         } 
         else throw typeErrorInvalidType
@@ -163,23 +168,25 @@ class StringT{
 }
 
 class ObjectT {
-    constructor( def, attr ) {
+    constructor( def, rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = false
         this.tmpl = def
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+        setDefaultRules (this.rules)
     }
 
-    checkType( obj ) {
+    checkType( obj, createMissingProperties ) {
         let validationErrors = null
-        if ( this.attr.required && obj == undefined ) throw typeErrorMissing
-        if (typeof(obj) != "object") throw typeErrorInvalidType
+        let oprops = Object.keys(obj)
+        if ( this.rules.required && obj == undefined ) throw typeErrorMissing
+        if ( ! obj instanceof Object ) throw typeErrorInvalidType
         for ( let k of Object.keys(this.tmpl)) {
             let v = obj[k]
             let fd = this.tmpl[k]
             if (typeof(fd.checkType) == "function" ) { 
                 try {
                     let cr = fd.checkType(v)
-                    obj[k] = cr
+                    if (createMissingProperties || oprops.includes(k)) obj[k] = cr
                 } catch (e) {
                     if (validationErrors == null) validationErrors={}
                     validationErrors[k] = e
@@ -190,17 +197,17 @@ class ObjectT {
             }
         }
         if ( validationErrors ) throw validationErrors
-        if (typeof(this.attr.validate) == "function" ) {
-            let x = this.attr.validate(obj)
+        if (typeof(this.rules.validate) == "function" ) {
+            let x = this.rules.validate(obj)
             if (x) throw x
         }
             
         return obj
     }
 
-    validate( obj ) {
+    validate( obj, createMissingProperties ) {
         try {
-            let ret = this.checkType(obj)
+            let ret = this.checkType(obj, createMissingProperties)
             return null
         } catch (e) {
             return e
@@ -212,7 +219,7 @@ class ObjectT {
         let ret = {}
         for ( let k of Object.keys(this.tmpl)) {
             let v = obj[k]
-            let fd = this.tmpl[k].attr
+            let fd = this.tmpl[k].rules
             if (fd == undefined ) 
                 console.log("undef")
             let fn = fd.dbField || k          
@@ -220,26 +227,66 @@ class ObjectT {
         }
         return ret
     }
+
+    insertSQL(o) {
+        let dbfields=[]
+        let pfields = []
+        if ( ! this.rules.table ) throw "Template has no table name defined"
+        if ( ! this.validate(o)) {
+            for ( let k of Object.keys(this.tmpl)) {
+                if (this.tmpl[k].isSimpleType && ! this.tmpl[k].rules.autoIncrement
+                    && Object.keys(o).includes(k) ) {
+                    dbfields.push(this.tmpl[k].dbfield || k)
+                    pfields.push("@"+k)
+                }
+            }        
+            return `insert into ${this.rules.table} (${dbfields.join(", ")}) values (${pfields.join(", ")})`
+        } else {
+            return null
+        }
+    }
+
+    updateSQL(o) {
+        let updFields = []
+        let where = null
+        if ( ! this.rules.table ) throw "Template has no table name defined"
+        if ( ! this.validate(o)) {
+            for ( let k of Object.keys(this.tmpl)) {
+                if (this.tmpl[k].rules.primaryKey ) {
+                    where = this.tmpl[k].dbfield || k + " = @" +k
+                } else if (this.tmpl[k].isSimpleType && ! this.tmpl[k].rules.autoIncrement
+                    && Object.keys(o).includes(k) ) {
+                        updFields.push(this.tmpl[k].dbfield || k + " = @" +k)
+                }
+            } 
+            if ( where == null ) throw "Template has no primary key defined"
+            if ( updFields.length > 0 )
+                return `update ${this.rules.table} set (${updFields.join(", ")}) where ${where}`
+
+        } 
+        return null
+    }    
 }
 
 class ArrayT{
-    constructor( def, attr ) {
-        if (typeof(def) != 'object') throw Object.getPrototypeOf(this).constructor.name + ": Invalid type definition"
+    constructor( def, rules ) {
+        this.rules = rules || {}
+        this.isSimpleType = false
+        if ( ! def instanceof Object ) throw Object.getPrototypeOf(this).constructor.name + ": Invalid type definition"
         if (def.checkType && typeof(def.checkType) == "function") {
             this.tmpl = def
         } else {
             this.tmpl = typeObject(def)
         }
-        this.attr = attr || {}
-        setDefaultRules (this.attr)
+        setDefaultRules (this.rules)
     }    
 
     checkType( obj ) {
         let validationErrors = null
-        if ( this.attr.required && obj == undefined ) throw typeErrorMissing
+        if ( this.rules.required && obj == undefined ) throw typeErrorMissing
         if (! Array.isArray(obj)) throw typeErrorInvalidType
-        if ( this.attr.minLength && obj.length < this.attr.minLength ) throw typeErrorArrayTooSmall
-        if ( this.attr.maxLength && obj.length > this.attr.maxLength ) throw typeErrorArrayTooLarge
+        if ( this.rules.minLength && obj.length < this.rules.minLength ) throw typeErrorArrayTooSmall
+        if ( this.rules.maxLength && obj.length > this.rules.maxLength ) throw typeErrorArrayTooLarge
         for (let i in obj) {
             try {
                 let x = this.tmpl.checkType(obj[i])
@@ -285,12 +332,12 @@ function typeString( rules ) {
     return new StringT(rules)
 }
 
-function typeObject( def, attr ) {
-    return new ObjectT(def, attr)
+function typeObject( def, rules ) {
+    return new ObjectT(def, rules)
 }
 
-function typeArray( def, attr ) {
-    return new ArrayT(def, attr)
+function typeArray( def, rules ) {
+    return new ArrayT(def, rules)
 }
 
 module.exports.int = typeInt

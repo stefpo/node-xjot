@@ -14,6 +14,7 @@ arrayObject = xjot.object({
 
 template = xjot.object({
     intField:   xjot.int({ required: true, dbField: "int_field" }),
+    numField:   xjot.number(),
     required:   xjot.int({ required: true, altName: "req"}),
     default:    xjot.int({ default: 17}),
     rangeIn:    xjot.number({ required: true, min: 0, max: 8}),
@@ -24,6 +25,7 @@ template = xjot.object({
     longstr:    xjot.string( {required: true, maxLength: 8, autoTruncate: true }), 
     dateStr:    xjot.date(),
     dateStrErr: xjot.date(),
+    dateDate:   xjot.date(),
     obj:        xjot.object({
                     f1: xjot.int(),
                     f2: xjot.string() }, 
@@ -47,6 +49,7 @@ template = xjot.object({
 
 obj = {
     intField: 12.5,
+    numField: "18.36E3",
     required: undefined,
     default: undefined,
     rangeIn: 3,
@@ -58,6 +61,7 @@ obj = {
     longstr: "This is a test",
     dateStr: "2020-10-25",
     dateStrErr: "Not a date",
+    dateDate: new Date(Date.now()),
     obj: {
         f1: "23", f2: "A string"
     },
@@ -67,9 +71,29 @@ obj = {
     arr3: [ 1,2,3,4,5, "this one fails" ]  
 }
 
+contactRecord = xjot.object( {
+    id: xjot.int( { autoIncrement: true, primaryKey: true }),
+    firstName : xjot.string(),
+    lastName : xjot.string(),
+    birthDate: xjot.date(),
+    age: xjot.int(),
+    email: xjot.string()
+    }, { table: "contact"}
+)
 
+aPerson = {
+    id: "23",
+    firstName : "John",
+    lastName : "Doe",
+    birthDate: "1997-11-18",
+    age: 23
+}
 
 //console.log(JSON.stringify(validateObject(obj,template),undefined,4 ))
 console.log(JSON.stringify(template.validate(obj),undefined,4 ))
 console.log(JSON.stringify(obj,undefined,4))
+
+console.log(contactRecord.insertSQL(aPerson) )
+console.log(contactRecord.updateSQL(aPerson) )
+
 //console.log(JSON.stringify(template.toDbFields(obj),undefined,4))
