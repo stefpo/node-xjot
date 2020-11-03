@@ -208,7 +208,8 @@ class ObjectT {
     validate( obj, createMissingProperties ) {
         try {
             let ret = this.checkType(obj, createMissingProperties)
-            return null
+            if (this.rules.validate) return this.rules.validate(this)
+            else return null
         } catch (e) {
             return e
         }
