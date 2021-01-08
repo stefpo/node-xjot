@@ -254,15 +254,15 @@ class ObjectT {
         if ( ! this.validate(o)) {
             for ( let k of Object.keys(this.tmpl)) {
                 if (this.tmpl[k].rules.primaryKey ) {
-                    where = this.tmpl[k].rules.dbfield || k + " = @" +k
+                    where = (this.tmpl[k].rules.dbfield || k) + " = @" +k
                 } else if (this.tmpl[k].isSimpleType && ! this.tmpl[k].rules.autoIncrement
                     && Object.keys(o).includes(k)  && this.tmpl[k].rules.dbfield !== null ) {
-                        updFields.push(this.tmpl[k].rules.dbfield || k + " = @" +k)
+                        updFields.push( (this.tmpl[k].rules.dbfield || k) + " = @" +k)
                 }
             } 
             if ( where == null ) throw "Template has no primary key defined"
             if ( updFields.length > 0 )
-                return `update ${this.rules.table} set (${updFields.join(", ")}) where ${where}`
+                return `update ${this.rules.table} set ${updFields.join(", ")} where ${where}`
 
         } 
         return null
