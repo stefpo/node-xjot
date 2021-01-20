@@ -1,6 +1,6 @@
 {
   "name": "xjot",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "A extensible object type checking library",
   "main": "index.js",
   "scripts": {
