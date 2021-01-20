@@ -285,7 +285,7 @@ class ArrayT{
     checkType( obj ) {
         let validationErrors = null
         if ( this.rules.required && obj == undefined ) throw typeErrorMissing
-        if (! Array.isArray(obj)) throw typeErrorInvalidType
+        if ( obj && ! Array.isArray(obj)) throw typeErrorInvalidType
         if ( this.rules.minLength && obj.length < this.rules.minLength ) throw typeErrorArrayTooSmall
         if ( this.rules.maxLength && obj.length > this.rules.maxLength ) throw typeErrorArrayTooLarge
         for (let i in obj) {
